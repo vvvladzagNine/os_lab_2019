@@ -9,7 +9,6 @@ int main(int argc, char **argv) {
     printf("Usage: %s seed arraysize\n", argv[0]);
     return 1;
   }
-
   int seed = atoi(argv[1]);
   if (seed <= 0) {
     printf("seed is a positive number\n");
