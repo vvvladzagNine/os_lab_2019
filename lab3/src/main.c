@@ -12,6 +12,24 @@ int main(int argc, char* argv[]) {
 		return -1;
 	}
 
-	execvp("./" SEQUENTIAL, argv);
-	printf("Error: execvp() failed, errno=%d\n", errno);
+
+	pid_t pid;
+	
+  	int rv;
+  switch(pid=fork()) {
+  case -1:
+          perror("fork"); /* произошла ошибка */
+          exit(1); /*выход из родительского процесса*/
+  case 0:
+          printf(" CHILD: Это процесс-потомок!\n");
+          printf(" CHILD: Мой PID -- %d\n", getpid());
+          printf(" CHILD: PID моего родителя -- %d\n",
+              getppid());
+          execvp("./" SEQUENTIAL, argv);
+  default:;
+          
+          
+        
+  }
+
 }
