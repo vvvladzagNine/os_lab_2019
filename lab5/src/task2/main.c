@@ -15,7 +15,7 @@ typedef struct {
   uint32_t mod;
 } fac_thread_t;
 
-static uint64_t MultModulo(uint64_t a, uint64_t b, uint64_t mod) {
+static uint64_t doMath(uint64_t a, uint64_t b, uint64_t mod) {
   uint64_t result = 0;
   a = a % mod;
 
@@ -29,13 +29,13 @@ static uint64_t MultModulo(uint64_t a, uint64_t b, uint64_t mod) {
   return result % mod;
 }
 
-static void fac_threaded(fac_thread_t* f) {
+static void each_thread_do_this(fac_thread_t* f) {
   printf("Thread: id=%lu from %lu to %lu\n", f->thread, f->begin, f->end - 1);
   for (uint64_t i = f->begin; i < f->end; i++) {
     pthread_mutex_lock(&fac_mtx);
-    res = MultModulo(res, i, f->mod);
+    res = doMath(res, i, f->mod);
     if (!res) {
-      printf("Error: uint64_t overflow (i=%lu)\n", i);
+      printf("Error: change your 'mode' option to simple number\n", i);
       pthread_mutex_unlock(&fac_mtx);
       return;
     }
@@ -124,10 +124,8 @@ int main(int argc, char* argv[]) {
     thread_pool[i].end = end;
     thread_pool[i].mod = mod;
 
-    if (pthread_create(&thread_pool[i].thread, NULL, (void *)fac_threaded, (void*)&thread_pool[i]) != 0) {
-      printf("Error: cannot create new pthread\n");
-      return -1;
-    }
+    pthread_create(&thread_pool[i].thread, NULL, (void *)each_thread_do_this, (void*)&thread_pool[i]);
+      
   }
 
   for (uint32_t i = 0; i < pnum; i++)
